@@ -18,16 +18,39 @@ jobs:
           paths:
             - .
   deploy:
-    requires:
-      - build
     docker:
       - image: arvindr226/alpine-ssh
+    parameters:
+      build_file:
+        type: string
+        default: $CIRCLE_PROJECT_REPONAME-$CIRCLE_SHA1.tar.gz
     steps:
-      - run: |
-          ls
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: >-
+            tar czvf << parameters.build_file >> -C ~/project/dist .
+          name: Compress build
+      - run:
+          command: >-
+            scp -oStrictHostKeyChecking=no -v
+            << parameters.build_file >> $USER@$IP:~/.
+          name: Copy build
+      - run:
+          command: >-
+            ssh -oStrictHostKeyChecking=no -v
+            $USER@$IP
+            "./deploy-vue.sh
+            $CIRCLE_PROJECT_REPONAME
+            << parameters.build_file >>
+            prd
+            $DOPPLER_TOKEN"
+          name: Run remote deployment script
 
 workflows:
   digitalocean-deploy:
     jobs:
       - build
-      - deploy
+      - deploy:
+          requires:
+            - build
