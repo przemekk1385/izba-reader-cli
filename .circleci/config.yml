@@ -30,7 +30,8 @@ jobs:
             --config prd
             --format=env-no-quotes
             --no-file --token $DOPPLER_TOKEN
-            | grep VUE_APP > ~/project/.env.production.local
+            | grep VUE_APP
+            > ~/project/.env.production.local
           name: Fetch env variables
       - run:
           command: npm run build
@@ -55,18 +56,21 @@ jobs:
           name: Compress build
       - run:
           command: >-
-            scp -oStrictHostKeyChecking=no -v
-            << parameters.build_file >> $USER@$IP:~/.
+            scp
+            -oStrictHostKeyChecking=no
+            -v
+            << parameters.build_file >>
+            $USER@$IP:~/.
           name: Copy build
       - run:
           command: >-
-            ssh -oStrictHostKeyChecking=no -v
+            ssh
+            -oStrictHostKeyChecking=no
+            -v
             $USER@$IP
             "./deploy-vue.sh
             $CIRCLE_PROJECT_REPONAME
             << parameters.build_file >>
-            prd
-            $DOPPLER_TOKEN"
           name: Run remote deployment script
 
 workflows:
@@ -76,3 +80,6 @@ workflows:
       - deploy:
           requires:
             - build
+          filters:
+            branches:
+              only: master
