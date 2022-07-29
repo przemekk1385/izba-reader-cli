@@ -30,7 +30,7 @@ jobs:
             --config prd
             --format=env-no-quotes
             --no-file --token $DOPPLER_TOKEN
-            | grep VUE_APP > "project/.env.production.local"
+            | grep VUE_APP > ~/project/.env.production.local
           name: Fetch env variables
       - run:
           command: npm run build
