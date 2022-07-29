@@ -70,7 +70,7 @@ jobs:
             $USER@$IP
             "./deploy-vue.sh
             $CIRCLE_PROJECT_REPONAME
-            << parameters.build_file >>
+            << parameters.build_file >>"
           name: Run remote deployment script
 
 workflows:
