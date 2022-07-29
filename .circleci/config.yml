@@ -1,0 +1,85 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
+jobs:
+  build:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          command: >-
+            (curl
+            -Ls
+            --tlsv1.2
+            --proto "=https"
+            --retry 3
+            https://cli.doppler.com/install.sh
+            || wget
+            -t 3
+            -qO- https://cli.doppler.com/install.sh)
+            | sudo sh
+          name: Install Doppler
+      - run:
+          command: >-
+            doppler secrets download
+            --project $CIRCLE_PROJECT_REPONAME
+            --config prd
+            --format=env-no-quotes
+            --no-file --token $DOPPLER_TOKEN
+            | grep VUE_APP
+            > ~/project/.env.production.local
+          name: Fetch env variables
+      - run:
+          command: npm run build
+          name: Build app
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .
+  deploy:
+    docker:
+      - image: arvindr226/alpine-ssh
+    parameters:
+      build_file:
+        type: string
+        default: $CIRCLE_PROJECT_REPONAME-$CIRCLE_SHA1.tar.gz
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: >-
+            tar czvf << parameters.build_file >> -C ~/project/dist .
+          name: Compress build
+      - run:
+          command: >-
+            scp
+            -oStrictHostKeyChecking=no
+            -v
+            << parameters.build_file >>
+            $USER@$IP:~/.
+          name: Copy build
+      - run:
+          command: >-
+            ssh
+            -oStrictHostKeyChecking=no
+            -v
+            $USER@$IP
+            "./deploy-vue.sh
+            $CIRCLE_PROJECT_REPONAME
+            << parameters.build_file >>
+          name: Run remote deployment script
+
+workflows:
+  digitalocean-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
