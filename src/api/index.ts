@@ -1,4 +1,3 @@
-export { feedEndpoint } from "@/api/feed";
+export { articleEndpoint } from "@/api/article";
 export { headerEndpoint } from "@/api/header";
 export { mailEndpoint } from "@/api/mail";
-export { newsEndpoint } from "@/api/news";

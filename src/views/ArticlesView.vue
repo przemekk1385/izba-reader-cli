@@ -1,10 +1,10 @@
 <template>
   <n-grid cols="1" y-gap="24">
     <n-gi>
-      <n-page-header subtitle="fetched feeds and news">
+      <n-page-header subtitle="fetched articles">
         <n-grid cols="12" item-responsive responsive="screen">
           <n-gi span="xs:6 s:4 m:1 l:1">
-            <n-statistic label="Fetched" :value="feedsCount + newsCount" />
+            <n-statistic label="All" :value="articlesCount" />
           </n-gi>
           <n-gi span="xs:6 s:4 m:1 l:1">
             <n-statistic label="Present" :value="articles.length" />
@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { NGi, NGrid, NPageHeader, NStatistic, useNotification } from "naive-ui";
-import { feedEndpoint, mailEndpoint, newsEndpoint } from "@/api";
+import { articleEndpoint, mailEndpoint } from "@/api";
 
 import TheArticles from "@/components/TheArticles.vue";
 import TheEmailCard from "@/components/TheEmailCard.vue";
@@ -39,41 +39,17 @@ const notification = useNotification();
 
 const loading: Ref<boolean> = ref(true);
 
-const feedsCount: Ref<number> = ref(0);
-const newsCount: Ref<number> = ref(0);
-
 const articles: Ref<Array<Feed | News>> = ref([]);
+const articlesCount: Ref<number> = ref(0);
 
-const fetchFeeds = async (): Promise<void> => {
-  const feeds = await feedEndpoint.list();
+const fetchArticles = async (): Promise<void> => {
+  const articlesList = await articleEndpoint.list();
 
-  if (feeds) {
-    articles.value.push(
-      ...feeds.map(({ title, description, url }) => ({
-        title,
-        description,
-        url,
-        uuid: crypto.randomUUID(),
-      }))
+  if (articlesList) {
+    articlesList.forEach((item) =>
+      Object.assign(item, { uuid: crypto.randomUUID() })
     );
-    feedsCount.value = feeds.length;
-  }
-};
-
-const fetchNews = async (): Promise<void> => {
-  const news = await newsEndpoint.list();
-
-  if (news) {
-    articles.value.push(
-      ...news.map(({ title, description, url, date }) => ({
-        title,
-        description,
-        url,
-        date,
-        uuid: crypto.randomUUID(),
-      }))
-    );
-    newsCount.value = news.length;
+    articles.value.push(...articlesList);
   }
 };
 
@@ -104,8 +80,8 @@ const handleSend = async ({
 };
 
 onMounted(async () => {
-  await fetchFeeds();
-  await fetchNews();
+  await fetchArticles();
+  articlesCount.value = articles.value.length;
 
   setTimeout(() => {
     loading.value = false;
