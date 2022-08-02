@@ -33,17 +33,19 @@ import TheEmailCard from "@/components/TheEmailCard.vue";
 import ThePreloader from "@/components/ThePreloader.vue";
 
 import type { Ref } from "vue";
-import type { Feed, News } from "@/types";
+import type { Article } from "@/types";
 
 const notification = useNotification();
 
 const loading: Ref<boolean> = ref(true);
 
-const articles: Ref<Array<Feed | News>> = ref([]);
+const articles: Ref<Article[]> = ref([]);
 const articlesCount: Ref<number> = ref(0);
 
 const fetchArticles = async (): Promise<void> => {
   const articlesList = await articleEndpoint.list();
+
+  console.log(articles);
 
   if (articlesList) {
     articlesList.forEach((item) =>

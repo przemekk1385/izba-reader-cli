@@ -1,12 +1,12 @@
 import axios from "axios";
 
-import type { Feed, News } from "@/types";
+import type { Article } from "@/types";
 
 class ArticleEndpoint {
   private apiUrl = `${process.env.VUE_APP_API_HOST}/article`;
   private xApiKey = process.env.VUE_APP_API_KEY;
 
-  public async list(): Promise<(Feed | News)[] | undefined> {
+  public async list(): Promise<Article[] | undefined> {
     try {
       const { data, status } = await axios.get(this.apiUrl, {
         headers: { "X-API-KEY": this.xApiKey },

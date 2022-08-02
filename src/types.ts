@@ -1,15 +1,13 @@
-type Feed = {
+type Article = {
   title: string;
   description: string;
   url: string;
   uuid: string;
 };
 
-type News = Feed & { date: string };
-
 type Review = {
   recipient: string;
-  articles: (Feed | News)[];
+  articles: Article[];
 };
 
-export type { Feed, News, Review };
+export type { Article, Review };
