@@ -82,18 +82,20 @@ workflows:
   digitalocean-deploy:
     jobs:
       - build:
+          name: build-prd
           filters:
             branches:
               only: master
       - build:
+          name: build-stg
           token: $DOPPLER_TOKEN_STG
       - deploy:
           filters:
             branches:
               only: master
           requires:
-            - build
+            - build-prd
       - deploy:
           requires:
-            - build
+            - build-stg
           app_dirname: $CIRCLE_PROJECT_REPONAME-stg
