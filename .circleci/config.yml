@@ -6,6 +6,10 @@ orbs:
 jobs:
   build:
     executor: node/default
+    parameters:
+      token:
+        type: string
+        default: $DOPPLER_TOKEN_PRD
     steps:
       - checkout
       - node/install-packages:
@@ -26,12 +30,11 @@ jobs:
       - run:
           command: >-
             doppler secrets download
-            --project $CIRCLE_PROJECT_REPONAME
-            --config prd
             --format=env-no-quotes
-            --no-file --token $DOPPLER_TOKEN
+            --no-file
+            --token << parameters.token >>
             | grep VUE_APP
-            > ~/project/.env.production.local
+            > ~/project/.env.production
           name: Fetch env variables
       - run:
           command: npm run build
@@ -44,22 +47,24 @@ jobs:
     docker:
       - image: arvindr226/alpine-ssh
     parameters:
-      build_file:
+      app_dirname:
         type: string
-        default: $CIRCLE_PROJECT_REPONAME-$CIRCLE_SHA1.tar.gz
+        default: $CIRCLE_PROJECT_REPONAME
     steps:
       - attach_workspace:
           at: ~/project
       - run:
           command: >-
-            tar czvf << parameters.build_file >> -C ~/project/dist .
+            tar
+            czvf $CIRCLE_PROJECT_REPONAME-$CIRCLE_SHA1.tar.gz
+            -C ~/project/dist .
           name: Compress build
       - run:
           command: >-
             scp
             -oStrictHostKeyChecking=no
             -v
-            << parameters.build_file >>
+            $CIRCLE_PROJECT_REPONAME-$CIRCLE_SHA1.tar.gz
             $USER@$IP:~/.
           name: Copy build
       - run:
@@ -69,17 +74,30 @@ jobs:
             -v
             $USER@$IP
             "./deploy-vue.sh
-            $CIRCLE_PROJECT_REPONAME
-            << parameters.build_file >>"
+            << parameters.app_dirname >>
+            $CIRCLE_PROJECT_REPONAME-$CIRCLE_SHA1.tar.gz"
           name: Run remote deployment script
 
 workflows:
   digitalocean-deploy:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+      - build:
+          name: build-prd
           filters:
             branches:
               only: master
+      - build:
+          name: build-stg
+          filters:
+            branches:
+              only: /^release\/v[0-9]+(\.[0-9]+)*$/
+          token: $DOPPLER_TOKEN_STG
+      - deploy:
+          name: deploy-prd
+          requires:
+            - build-prd
+      - deploy:
+          name: deploy-stg
+          requires:
+            - build-stg
+          app_dirname: $CIRCLE_PROJECT_REPONAME-stg
