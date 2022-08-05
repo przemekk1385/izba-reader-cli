@@ -91,5 +91,9 @@ workflows:
           filters:
             branches:
               only: master
+          reguires:
+            - build
       - deploy:
+          requires:
+            - build
           app_dirname: $CIRCLE_PROJECT_REPONAME-stg
