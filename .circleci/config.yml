@@ -85,12 +85,12 @@ workflows:
           name: build-prd
           filters:
             branches:
-              only: master
+              only: /^release\/v[0-9]+(\.[0-9]+)*$/
       - build:
           name: build-stg
           filters:
             branches:
-              only: /^release\/v[0-9]+(\.[0-9]+)*$/
+              only: master
           token: $DOPPLER_TOKEN_STG
       - deploy:
           name: deploy-prd
