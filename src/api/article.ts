@@ -13,7 +13,23 @@ class ArticleEndpoint {
       });
 
       if (status === 200) {
-        return data;
+        return data.map(
+          ({
+            title,
+            description,
+            url,
+          }: {
+            title: string;
+            description: string;
+            url: string;
+          }) => ({
+            title,
+            description,
+            url,
+            uuid: crypto.randomUUID(),
+            isOwn: false,
+          })
+        );
       } else {
         const detail = data;
         console.log(detail);
