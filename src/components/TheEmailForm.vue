@@ -43,9 +43,9 @@ const rules = {
     required: true,
     validator(_0: FormItemRule, value: string) {
       if (!value) {
-        return new Error("Email is required");
+        return new Error("email is required");
       } else if (!/^(\w|\.)+@((iep\.org\.pl)|(gmail\.com))$/gim.test(value)) {
-        return new Error("This email is not supported");
+        return new Error("this email is not supported");
       }
       return true;
     },
