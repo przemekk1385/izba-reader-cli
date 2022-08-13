@@ -1,40 +1,37 @@
 <template>
-  <n-card>
-    <n-form ref="formRef" :model="formValue" :rules="rules">
-      <n-form-item path="email">
-        <n-input-group>
-          <n-input
-            placeholder="email"
-            type="text"
-            v-model:value="formValue.email"
-          >
-            <template #prefix>
-              <n-icon :component="At" />
-            </template>
-          </n-input>
-          <n-button ghost @click="handleClick">
-            <template #icon>
-              <n-icon :component="Send" />
-            </template>
-          </n-button>
-        </n-input-group>
-      </n-form-item>
-    </n-form>
-  </n-card>
+  <n-form ref="formRef" :model="formValue" :rules="rules">
+    <n-form-item path="email">
+      <n-input-group :show-label="false">
+        <n-input
+          placeholder="user@example.com"
+          type="text"
+          v-model:value="formValue.email"
+        >
+          <template #prefix>
+            <n-icon :component="Email" />
+          </template>
+        </n-input>
+        <n-button ghost @click="handleClick">
+          <template #icon>
+            <n-icon :component="Send" />
+          </template>
+        </n-button>
+      </n-input-group>
+    </n-form-item>
+  </n-form>
 </template>
 
 <script setup lang="ts">
 import { defineEmits, ref } from "vue";
 import {
   NButton,
-  NCard,
   NForm,
   NFormItem,
   NIcon,
   NInput,
   NInputGroup,
 } from "naive-ui";
-import { At, Send } from "@vicons/carbon";
+import { Email, Send } from "@vicons/carbon";
 
 import type { FormInst, FormItemRule } from "naive-ui/es/form/src/interface";
 
