@@ -1,7 +1,7 @@
 <template>
   <n-form ref="formRef" :model="formValue" :rules="rules">
     <n-form-item :show-label="false" path="title">
-      <n-input placeholder="title" type="text" v-model:value="formValue.title">
+      <n-input placeholder="Title" type="text" v-model:value="formValue.title">
         <template #prefix>
           <n-icon :component="StringText" />
         </template>
@@ -20,7 +20,7 @@
     </n-form-item>
     <n-form-item label="Description" path="description">
       <n-input
-        placeholder="description"
+        placeholder="Text goes here."
         type="textarea"
         v-model:value="formValue.description"
       />
