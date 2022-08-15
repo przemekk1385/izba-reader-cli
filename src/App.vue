@@ -1,11 +1,11 @@
 <template>
   <n-config-provider local="en_US" :theme="darkTheme">
-    <n-notification-provider>
+    <n-message-provider>
       <n-layout content-style="padding: 24px">
         <router-view />
       </n-layout>
       <n-back-top />
-    </n-notification-provider>
+    </n-message-provider>
     <n-global-style />
   </n-config-provider>
 </template>
@@ -17,6 +17,6 @@ import {
   NConfigProvider,
   NGlobalStyle,
   NLayout,
-  NNotificationProvider,
+  NMessageProvider,
 } from "naive-ui";
 </script>
