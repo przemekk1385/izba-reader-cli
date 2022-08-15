@@ -16,48 +16,45 @@
     <the-email-form @send="handleSend" />
   </n-drawer>
 
-  <div style="position: fixed; right: 24px">
-    <n-space>
-      <n-button
-        circle
-        secondary
-        size="large"
-        strong
-        @click="articleDrawer = true"
-      >
-        <template #icon>
-          <n-icon :component="DocumentAdd" />
-        </template>
-      </n-button>
-      <n-button
-        circle
-        secondary
-        size="large"
-        strong
-        @click="emailDrawer = true"
-      >
-        <template #icon>
-          <n-icon :component="MailAll" />
-        </template>
-      </n-button>
-    </n-space>
-  </div>
-
-  <div style="margin-top: 72px">
-    <n-grid cols="1" y-gap="24">
-      <n-gi v-if="!loading && !articles.filter(({ isOwn }) => !isOwn).length">
-        <n-alert title="Error" type="error">
-          Failed to fetch articles. See console for details.
-        </n-alert>
-      </n-gi>
-      <n-gi v-if="loading">
-        <the-preloader />
-      </n-gi>
-      <n-gi v-else>
-        <the-articles v-model="articles" />
-      </n-gi>
-    </n-grid>
-  </div>
+  <n-grid cols="1" y-gap="24">
+    <n-gi>
+      <n-space>
+        <n-button
+          circle
+          secondary
+          size="large"
+          strong
+          @click="articleDrawer = true"
+        >
+          <template #icon>
+            <n-icon :component="DocumentAdd" />
+          </template>
+        </n-button>
+        <n-button
+          circle
+          secondary
+          size="large"
+          strong
+          @click="emailDrawer = true"
+        >
+          <template #icon>
+            <n-icon :component="MailAll" />
+          </template>
+        </n-button>
+      </n-space>
+    </n-gi>
+    <n-gi v-if="!loading && !articles.filter(({ isOwn }) => !isOwn).length">
+      <n-alert title="Error" type="error">
+        Failed to fetch articles. See console for details.
+      </n-alert>
+    </n-gi>
+    <n-gi v-if="loading">
+      <the-preloader />
+    </n-gi>
+    <n-gi v-else>
+      <the-articles v-model="articles" />
+    </n-gi>
+  </n-grid>
 </template>
 
 <script setup lang="ts">
@@ -70,7 +67,7 @@ import {
   NGrid,
   NIcon,
   NSpace,
-  useNotification,
+  useMessage,
 } from "naive-ui";
 import { DocumentAdd, MailAll } from "@vicons/carbon";
 
@@ -84,7 +81,7 @@ import ThePreloader from "@/components/ThePreloader.vue";
 import type { Ref } from "vue";
 import type { Article } from "@/types";
 
-const notification = useNotification();
+const message = useMessage();
 
 const articleDrawer: Ref<boolean> = ref(false);
 const emailDrawer: Ref<boolean> = ref(false);
@@ -105,6 +102,8 @@ const fetchArticles = async (): Promise<void> => {
 
 const handleAdd = (article: Article): void => {
   articles.value.unshift(article);
+  message.info(`Article '${article.title}' added to review.`);
+  articleDrawer.value = false;
 };
 
 const handleSend = async ({
@@ -121,16 +120,13 @@ const handleSend = async ({
     review,
   });
   if (status === 202) {
-    notification.success({
-      title: "Ok",
-      description: `Review sent to '${recipient}'.`,
-    });
+    message.info(
+      `Review sent successfully, email to '${recipient}' should be sent soon.`
+    );
   } else {
-    notification.error({
-      title: "Error",
-      description: "Failed to send review.",
-    });
+    message.error("Failed to send review.");
   }
+  emailDrawer.value = false;
 };
 
 onMounted(async () => {
