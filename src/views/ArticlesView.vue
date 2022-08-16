@@ -1,19 +1,53 @@
 <template>
+  <n-drawer
+    v-model:show="articleDrawer"
+    content-style="padding: 12px"
+    height="auto"
+    placement="top"
+  >
+    <the-own-article-form @add="handleAdd" />
+  </n-drawer>
+  <n-drawer
+    v-model:show="emailDrawer"
+    content-style="padding: 12px"
+    height="auto"
+    placement="top"
+  >
+    <the-email-form @send="handleSend" />
+  </n-drawer>
+
   <n-grid cols="1" y-gap="24">
     <n-gi>
-      <n-page-header subtitle="fetched articles">
-        <n-grid cols="12" item-responsive responsive="screen">
-          <n-gi span="xs:6 s:4 m:1 l:1">
-            <n-statistic label="All" :value="articlesCount" />
-          </n-gi>
-          <n-gi span="xs:6 s:4 m:1 l:1">
-            <n-statistic label="Present" :value="articles.length" />
-          </n-gi>
-        </n-grid>
-        <template #title> Articles </template>
-      </n-page-header>
+      <n-space>
+        <n-button
+          circle
+          secondary
+          size="large"
+          strong
+          @click="articleDrawer = true"
+        >
+          <template #icon>
+            <n-icon :component="DocumentAdd" />
+          </template>
+        </n-button>
+        <n-button
+          circle
+          secondary
+          size="large"
+          strong
+          @click="emailDrawer = true"
+        >
+          <template #icon>
+            <n-icon :component="MailAll" />
+          </template>
+        </n-button>
+      </n-space>
     </n-gi>
-    <n-gi> <the-email-card @send="handleSend" /> </n-gi>
+    <n-gi v-if="!loading && !articles.filter(({ isOwn }) => !isOwn).length">
+      <n-alert title="Error" type="error">
+        Failed to fetch articles. See console for details.
+      </n-alert>
+    </n-gi>
     <n-gi v-if="loading">
       <the-preloader />
     </n-gi>
@@ -25,22 +59,36 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { NGi, NGrid, NPageHeader, NStatistic, useNotification } from "naive-ui";
+import {
+  NAlert,
+  NButton,
+  NDrawer,
+  NGi,
+  NGrid,
+  NIcon,
+  NSpace,
+  useMessage,
+} from "naive-ui";
+import { DocumentAdd, MailAll } from "@vicons/carbon";
+
 import { articleEndpoint, mailEndpoint } from "@/api";
 
 import TheArticles from "@/components/TheArticles.vue";
-import TheEmailCard from "@/components/TheEmailCard.vue";
+import TheEmailForm from "@/components/TheEmailForm.vue";
+import TheOwnArticleForm from "@/components/TheOwnArticleForm.vue";
 import ThePreloader from "@/components/ThePreloader.vue";
 
 import type { Ref } from "vue";
 import type { Article } from "@/types";
 
-const notification = useNotification();
+const message = useMessage();
+
+const articleDrawer: Ref<boolean> = ref(false);
+const emailDrawer: Ref<boolean> = ref(false);
 
 const loading: Ref<boolean> = ref(true);
 
 const articles: Ref<Article[]> = ref([]);
-const articlesCount: Ref<number> = ref(0);
 
 const fetchArticles = async (): Promise<void> => {
   const articlesList = await articleEndpoint.list();
@@ -48,42 +96,44 @@ const fetchArticles = async (): Promise<void> => {
   console.log(articles);
 
   if (articlesList) {
-    articlesList.forEach((item) =>
-      Object.assign(item, { uuid: crypto.randomUUID() })
-    );
     articles.value.push(...articlesList);
   }
 };
 
+const handleAdd = (article: Article): void => {
+  articles.value.unshift(article);
+  message.info(`Article '${article.title}' added to review.`);
+  articleDrawer.value = false;
+};
+
 const handleSend = async ({
+  templates,
   email: recipient,
 }: {
+  templates: string[];
   email: string;
 }): Promise<void> => {
   const review = {
     recipient,
     articles: articles.value,
+    templates,
   };
 
   const status = await mailEndpoint.send({
     review,
   });
   if (status === 202) {
-    notification.success({
-      title: "Ok",
-      description: `Review sent to '${recipient}'.`,
-    });
+    message.info(
+      `Review sent successfully, email to '${recipient}' should be sent soon.`
+    );
   } else {
-    notification.error({
-      title: "Error",
-      description: "Failed to send review.",
-    });
+    message.error("Failed to send review.");
   }
+  emailDrawer.value = false;
 };
 
 onMounted(async () => {
   await fetchArticles();
-  articlesCount.value = articles.value.length;
 
   setTimeout(() => {
     loading.value = false;

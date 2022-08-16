@@ -3,6 +3,7 @@ type Article = {
   description: string;
   url: string;
   uuid: string;
+  isOwn: boolean;
 };
 
 type Review = {
