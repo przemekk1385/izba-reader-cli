@@ -107,13 +107,16 @@ const handleAdd = (article: Article): void => {
 };
 
 const handleSend = async ({
+  templates,
   email: recipient,
 }: {
+  templates: string[];
   email: string;
 }): Promise<void> => {
   const review = {
     recipient,
     articles: articles.value,
+    templates,
   };
 
   const status = await mailEndpoint.send({

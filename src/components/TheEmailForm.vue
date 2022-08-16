@@ -1,7 +1,13 @@
 <template>
   <n-form ref="formRef" :model="formValue" :rules="rules">
-    <n-form-item path="email">
-      <n-input-group :show-label="false">
+    <n-form-item path="template" label="Use template">
+      <n-checkbox-group v-model:value="formValue.templates">
+        <n-checkbox value="iep.html" label="IEPiOE" />
+        <!-- next -->
+      </n-checkbox-group>
+    </n-form-item>
+    <n-form-item path="email" :show-label="false">
+      <n-input-group>
         <n-input
           placeholder="user@example.com"
           type="text"
@@ -22,11 +28,15 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, ref } from "vue";
+import { defineEmits, Ref, ref } from "vue";
 import {
   NButton,
+  NCheckbox,
+  NCheckboxGroup,
   NForm,
   NFormItem,
+  NGi,
+  NGrid,
   NIcon,
   NInput,
   NInputGroup,
@@ -53,6 +63,7 @@ const rules = {
   },
 };
 const formValue = ref({
+  templates: [],
   email: "",
 });
 
@@ -64,4 +75,8 @@ const handleClick = (event: MouseEvent) => {
     }
   });
 };
+
+// TODO: templates endpoint
+const availableTemplates = [{ label: "IEP", value: "iep.html" }];
+const selectedTemplates = ref<string[]>([]);
 </script>
