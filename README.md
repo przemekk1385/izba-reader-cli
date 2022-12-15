@@ -1,24 +1,52 @@
-# izba-reader-cli
+# izba-reader-frontend
 
 ## Project setup
+
 ```
-npm install
+yarn install
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
-npm run serve
+yarn run serve
 ```
 
 ### Compiles and minifies for production
+
 ```
-npm run build
+yarn run build
 ```
 
 ### Lints and fixes files
+
 ```
-npm run lint
+yarn run lint
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Environment variables
+
+| Name             | Description                             |
+| ---------------- | --------------------------------------- |
+| VUE_APP_API_HOST | API host (eg. *http://api.example.com*) |
+| VUE_APP_API_KEY  | API key                                 |
+
+## Doppler configs
+
+Project can be run using [Doppler](https://www.doppler.com).
+
+### dev
+
+API runs on the same host, on port `8000`.
+
+### dev_docker_api
+
+API runs inside Docker container, on port `1304`.
+
+### prd
+
+API runs on external host.
