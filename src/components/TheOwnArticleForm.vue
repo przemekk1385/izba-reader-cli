@@ -1,29 +1,21 @@
 <template>
   <n-form ref="formRef" :model="formValue" :rules="rules">
     <n-form-item :show-label="false" path="title">
-      <n-input placeholder="Title" type="text" v-model:value="formValue.title">
+      <n-input v-model:value="formValue.title" placeholder="Title" type="text">
         <template #prefix>
           <n-icon :component="StringText" />
         </template>
       </n-input>
     </n-form-item>
     <n-form-item :show-label="false" path="url">
-      <n-input
-        placeholder="https://www.example.com/"
-        type="text"
-        v-model:value="formValue.url"
-      >
+      <n-input v-model:value="formValue.url" placeholder="https://www.example.com/" type="text">
         <template #prefix>
           <n-icon :component="Link" />
         </template>
       </n-input>
     </n-form-item>
     <n-form-item label="Description" path="description">
-      <n-input
-        placeholder="Text goes here."
-        type="textarea"
-        v-model:value="formValue.description"
-      />
+      <n-input v-model:value="formValue.description" placeholder="Text goes here." type="textarea" />
     </n-form-item>
     <n-grid cols="1">
       <n-gi>
