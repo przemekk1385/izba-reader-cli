@@ -1,5 +1,5 @@
 {
-  "name": "izba-reader-cli",
+  "name": "izba-reader-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
