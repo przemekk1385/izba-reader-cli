@@ -3,7 +3,7 @@ import axios from "axios";
 import type { Review } from "@/types";
 
 class MailEndpoint {
-  private apiUrl = `${process.env.VUE_APP_API_HOST}/mail`;
+  private apiUrl = `${process.env.VUE_APP_API_ROOT_URL}/mail`;
   private xApiKey = process.env.VUE_APP_API_KEY;
 
   public async send({

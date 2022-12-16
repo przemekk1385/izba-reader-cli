@@ -30,10 +30,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Environment variables
 
-| Name             | Description                             |
-| ---------------- | --------------------------------------- |
-| VUE_APP_API_HOST | API host (eg. *http://api.example.com*) |
-| VUE_APP_API_KEY  | API key                                 |
+| Name                 | Description                                     |
+| -------------------- | ----------------------------------------------- |
+| VUE_APP_API_ROOT_URL | API root url (eg. *http://api.example.com/api*) |
+| VUE_APP_API_KEY      | API key                                         |
 
 ## Doppler configs
 

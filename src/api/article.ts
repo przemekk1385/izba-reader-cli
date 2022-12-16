@@ -3,7 +3,7 @@ import axios from "axios";
 import type { Article } from "@/types";
 
 class ArticleEndpoint {
-  private apiUrl = `${process.env.VUE_APP_API_HOST}/article`;
+  private apiUrl = `${process.env.VUE_APP_API_ROOT_URL}/article`;
   private xApiKey = process.env.VUE_APP_API_KEY;
 
   public async list(): Promise<Article[] | undefined> {

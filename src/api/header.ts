@@ -1,7 +1,7 @@
 import axios, { AxiosRequestHeaders } from "axios";
 
 class HeaderEndpoint {
-  private apiUrl = `${process.env.VUE_APP_API_HOST}/header`;
+  private apiUrl = `${process.env.VUE_APP_API_ROOT_URL}/header`;
   private xApiKey = process.env.VUE_APP_API_KEY;
 
   public async list(): Promise<string[] | undefined> {
