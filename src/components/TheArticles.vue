@@ -28,11 +28,11 @@ import { defineEmits, defineProps } from "vue";
 import { NA, NButton, NCard, NGi, NGrid, NH2, NIcon, NText } from "naive-ui";
 import { Link, TrashCan } from "@vicons/carbon";
 
-import type { Feed, News } from "@/types";
+import type { Article } from "@/types";
 
 const emits = defineEmits(["update:modelValue"]);
 const props = defineProps<{
-  modelValue: (Feed | News)[];
+  modelValue: Article[];
 }>();
 
 const deleteItem = (lookupValue: string) => {
