@@ -1,42 +1,20 @@
 <template>
-  <n-drawer
-    v-model:show="articleDrawer"
-    content-style="padding: 12px"
-    height="auto"
-    placement="top"
-  >
+  <n-drawer v-model:show="articleDrawer" content-style="padding: 12px" height="auto" placement="top">
     <the-own-article-form @add="handleAdd" />
   </n-drawer>
-  <n-drawer
-    v-model:show="emailDrawer"
-    content-style="padding: 12px"
-    height="auto"
-    placement="top"
-  >
+  <n-drawer v-model:show="emailDrawer" content-style="padding: 12px" height="auto" placement="top">
     <the-email-form @send="handleSend" />
   </n-drawer>
 
   <n-grid cols="1" y-gap="24">
     <n-gi>
       <n-space>
-        <n-button
-          circle
-          secondary
-          size="large"
-          strong
-          @click="articleDrawer = true"
-        >
+        <n-button circle secondary size="large" strong @click="articleDrawer = true">
           <template #icon>
             <n-icon :component="DocumentAdd" />
           </template>
         </n-button>
-        <n-button
-          circle
-          secondary
-          size="large"
-          strong
-          @click="emailDrawer = true"
-        >
+        <n-button circle secondary size="large" strong @click="emailDrawer = true">
           <template #icon>
             <n-icon :component="MailAll" />
           </template>
@@ -92,8 +70,6 @@ const articles: Ref<Article[]> = ref([]);
 
 const fetchArticles = async (): Promise<void> => {
   const articlesList = await articleEndpoint.list();
-
-  console.log(articles);
 
   if (articlesList) {
     articles.value.push(...articlesList);
